@@ -1,0 +1,25 @@
+# C++ artifacts
+
+/build/
+/CMakeFiles/
+/CmakeCache.txt
+Makefile
+cmake_install.cmake
+
+# Editor/OS files
+
+.vscode/
+*.swp
+*.DS_Store
+*.log
+
+# Compiled files
+
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+
+
