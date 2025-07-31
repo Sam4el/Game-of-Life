@@ -16,7 +16,7 @@ void Printer::render(std::ostream& os) {
     for (int row = 0; row < state.getBoardState().size(); row++) {
         os << "|";
         for (int col = 0; col < state.getBoardState()[0].size(); col++) {
-            if (state.getBoardState()[row][col] == 1) {
+            if (state.getBoardState()[row][col] == true) {
                 os << "# ";
             }
             else {

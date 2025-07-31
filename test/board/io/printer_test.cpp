@@ -2,20 +2,24 @@
 #include "board/state.h"
 #include "board/io/printer.h"
 
+using namespace Board;
+
 TEST(PrinterTest, renderState) {
     std::stringstream buffer;
     // Reads cout output from streambuf? and saves in buffer
     // std::streambuf* oldCout = std::cout.rdbuf(buffer.rdbuf());
 
-    Board::BState state;
-    Board::IO::Printer printer{state};
+    BType testBoardState1{{0, 0, 1}, {0, 0, 1}, {0, 1, 0}};
+    BType testBoardState2{{0}};
 
-    state.createState(10,10, Board::BState::StateE::RANDOM);
+    BState state{testBoardState1};
+    IO::Printer printer{state};
+
     printer.render(std::cout);
 
-    state.createState(2, 1, Board::BState::StateE::DEAD);
+    state.setBoardState(testBoardState2);
     printer.render(buffer);
 
-    std::string expected = " --\n|    |\n --\n";
+    std::string expected = " --\n|  |\n --\n";
     EXPECT_EQ(buffer.str(), expected);
 }

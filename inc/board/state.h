@@ -4,21 +4,28 @@
 
 namespace Board {
 
-using BType = std::vector<std::vector<int>>;
+using BType = std::vector<std::vector<bool>>;
+
+enum class StateE {
+    RANDOM, 
+    DEAD
+};
 
 class BState{ 
 public:
-    enum StateE {
-        RANDOM, 
-        DEAD
-    };
+BState() = default;
+BState(BType boardState);
 
-    void createState(const int width, const int height, BState::StateE stateE);
-    BType getBoardState() const;
+void setBoardState(BType nextBoardState);
+void setCellStatus(int row, int col, bool status);
+
+BType getBoardState() const;
+int getHeight() const;
+int getWidth() const;
 
 private:
-    BType createDeadState(const int width, const int height);
-    BType boardState;
+BType boardState;
+
 };
 
 } // Board

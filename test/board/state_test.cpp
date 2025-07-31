@@ -1,20 +1,38 @@
 #include <gtest/gtest.h>
+
 #include "board/state.h"
 
-TEST(BoardTest, createStateDead) {
-    Board::BState state;
-    Board::BType deadState{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    state.createState(3, 3, Board::BState::StateE::DEAD);
-    
-    ASSERT_EQ(state.getBoardState(), deadState);
+using namespace Board;
+
+TEST(BoardTest, getAndSetBoardState) {
+    BType testBoardState{{0, 0, 1}, {0, 0, 1}, {0, 1, 0}};
+    BState state{};
+
+    state.setBoardState(std::move(testBoardState));
+    testBoardState = state.getBoardState();
+
+    ASSERT_EQ(testBoardState, state.getBoardState());
 }
 
-TEST(BoardTest, getBoardState) {
-    Board::BState state;
-    Board::BType testState;
+TEST(BoardTest, setCellStatus) {
+    BType testBoardState{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    BState state{testBoardState};
 
-    state.createState(5, 5, Board::BState::StateE::RANDOM);
-    testState = state.getBoardState();
+    state.setCellStatus(1, 1, 1);
 
-    ASSERT_EQ(testState, state.getBoardState());
+    ASSERT_NE(testBoardState, state.getBoardState());
+}
+
+TEST(BoardTest, getWidth) {
+    BType testBoardState{{0, 0, 1, 1}, {0, 0, 1, 1}, {0, 1, 0, 1}};
+    BState state{testBoardState};
+
+    ASSERT_EQ(state.getWidth(), 4);
+}
+
+TEST(BoardTest, getHeight) {
+    BType testBoardState{{0, 0, 1, 1}, {0, 0, 1, 1}, {0, 1, 0, 1}};
+    BState state{testBoardState};
+
+    ASSERT_EQ(state.getHeight(), 3);
 }

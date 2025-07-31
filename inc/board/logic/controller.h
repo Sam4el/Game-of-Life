@@ -3,32 +3,44 @@
 #pragma once
 
 namespace Board::Logic {
+
 class Controller {
 public:
-Controller() = delete;
-Controller(Board::BState& state);
 
-void nextState(Board::BState& state);
+enum class CreationMode {
+    AUTOMATIC,
+    MANUAL
+};
+
+Controller() = default;
+
+void nextState();
+void newBoard(int height, int width, CreationMode mode);
+void newBoard(BType& boardState);
+BType getBoardState() const;
 
 private:
+BType createBoardState(const int width, const int height, Board::StateE stateE);
+BType createDeadBoardState(const int width, const int height);
+void iterateRules(BState& state);
+int countLivingCells();
+void newCell(int row, int col, bool status, BState& state);
+
+// Rules:
+
 // Any live cell with 0 or 1 live neighbors becomes dead, 
 // because of underpopulation
-void ruleOne();
 
 // Any live cell with 2 or 3 live neighbors stays alive, 
 // because its neighborhood is just right
-void ruleTwo();
 
 // Any live cell with more than 3 live neighbors becomes dead, 
 // because of overpopulation
-void ruleThree();
 
 // Any dead cell with exactly 3 live neighbors becomes alive, 
 // by reproduction
-void ruleFour();
 
-Board::BState& state;
-Board::BState nextBState;
+Board::BState state;
 
 };
 } // Board::Logic

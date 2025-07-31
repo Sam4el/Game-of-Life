@@ -1,32 +1,27 @@
-#include <random>
 #include "board/state.h"
 
 namespace Board {
 
-void BState::createState(int width, int height, BState::StateE stateE) {
-    boardState = createDeadState(width, height);
+BState::BState(BType boardState) : boardState{std::move(boardState)} {}
 
-    if (stateE == BState::StateE::RANDOM) {
-        for (int w = 0; w < width; w++) {
-            for (int h = 0; h < height; h++) {
-                std::random_device rd;
-                std::mt19937 gen(rd());
-                std::bernoulli_distribution dist(0.2);
-                boardState[w][h] = dist(gen) ? 1 : 0;
-            }
-        }
-    }
+void BState::setBoardState(BType newBoardState) {
+    boardState = std::move(newBoardState);
 }
 
-BType BState::createDeadState(int width, int height) {
-    std::vector<int> rows(width, 0);
-    BType cols{static_cast<size_t>(height), std::move(rows)};
-
-    return std::move(cols);
+void BState::setCellStatus(int row, int col, bool status) {
+    boardState[row][col] = status;
 }
 
 BType BState::getBoardState() const {
     return boardState;
+}
+
+int BState::getHeight() const {
+    return boardState.size();
+}
+
+int BState::getWidth() const {
+    return boardState[0].size();
 }
 
 } // Board
