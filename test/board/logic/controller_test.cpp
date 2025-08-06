@@ -33,7 +33,14 @@ TEST(ControllerTest, newBoardAutomatic) {
 // }
 
 TEST(ControllerTest, nextState) {
-    // TODO
+    BType deadBoardState{{0, 0, 0}, {0, 1, 1}, {1, 0, 0}};
+    BType expectedOutput{{0, 0, 0}, {0, 1, 1}, {1, 0, 0}};
+    
+    Logic::Controller controller{};
+    controller.newBoard(deadBoardState);
+    controller.nextState();
+
+    ASSERT_EQ(controller.getBoardState(), expectedOutput);
 }
 
 

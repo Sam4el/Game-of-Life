@@ -5,15 +5,15 @@
 namespace Board::Logic {
 
 void Controller::nextState() {
-    BState nextBState{createBoardState(state.getHeight(), 
-                                  state.getWidth(), 
+    BState nextBState{createBoardState(state.getHeight(),
+                                  state.getWidth(),
                                   Board::StateE::DEAD)};
     iterateRules(nextBState);
     state.setBoardState(std::move(nextBState.getBoardState()));
 }
 
-void Controller::newBoard(int height, 
-                            int width, 
+void Controller::newBoard(int height,
+                            int width,
                             CreationMode mode = CreationMode::AUTOMATIC) {
     if (mode == CreationMode::AUTOMATIC) {
         state.setBoardState(createBoardState(height, width, Board::StateE::RANDOM));
@@ -33,16 +33,20 @@ BType Controller::getBoardState() const {
     return state.getBoardState();
 }
 
-BType Controller::createBoardState(int width, int height, Board::StateE stateE) {
-    BType boardState{createDeadBoardState(width, height)};
+BType Controller::createBoardState(int height, int width, Board::StateE stateE) {
+    if (height <= 0 || width <= 0) {
+        std::cout << "Size must be at least 1x1" << std::endl;
+        // TODO Throw exception
+    }
+    BType boardState{createDeadBoardState(height, width)};
 
     if (stateE == Board::StateE::RANDOM) {
-        for (int w = 0; w < width; w++) {
-            for (int h = 0; h < height; h++) {
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
                 std::random_device rd;
                 std::mt19937 gen(rd());
                 std::bernoulli_distribution dist(0.2);
-                boardState[w][h] = dist(gen) ? 1 : 0;
+                boardState[h][w] = dist(gen) ? 1 : 0;
             }
         }
     }
@@ -57,10 +61,10 @@ BType Controller::createDeadBoardState(int width, int height) {
 void Controller::iterateRules(BState& nextBState) {
     for (int h = 0; h < state.getHeight(); h++) {
         for (int w = 0; w < state.getWidth(); w++) {
-            int livingCells = countLivingCells();
+            int livingNeighbours = countLivingNeighbours(h, w);
             const BType& boardState = state.getBoardState();
             if (boardState[h][w] == 1) {
-                switch (livingCells) {
+                switch (livingNeighbours) {
                     case 0:
                     case 1:
                         newCell(h, w, 0, nextBState);
@@ -70,24 +74,37 @@ void Controller::iterateRules(BState& nextBState) {
                         newCell(h, w, 1, nextBState);
                         break;
                     default:
-                        if (livingCells > 3) {
+                        if (livingNeighbours > 3) {
                             newCell(h, w, 0, nextBState);
                         }
-                        else if (livingCells < 0) {
+                        else if (livingNeighbours < 0) {
                             std::cout << "Something is really bad" << std::endl;
                         }
                 }
             }
-            else if ((boardState[h][w] == 0) && (livingCells == 3)) {
+            else if ((boardState[h][w] == 0) && (livingNeighbours == 3)) {
                 newCell(h, w, 1, nextBState);
             }
         }
     }
 }
 
-int Controller::countLivingCells() {
+int Controller::countLivingNeighbours(int row, int col) {
+    int livingNeighbours = 0;
 
-    return 0;
+    for (int i = (row - 1); i <= (row + 1); row++) {
+        for (int j = (col - 1); j <= (col + 1); col++) {
+            if (i == 1 && j == 1) { continue; }
+            int r = row + i;
+            int c = col + j;
+            if (r >= 0 && row < state.getWidth()
+                && c >= 0 && col < state.getHeight()) {
+                livingNeighbours += (getBoardState()[r][c]);
+            }
+        }
+    }
+
+    return livingNeighbours;
 }
 
 void Controller::newCell(int row, int col, bool status, BState& nextBState) {

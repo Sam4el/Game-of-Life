@@ -23,7 +23,7 @@ private:
 BType createBoardState(const int width, const int height, Board::StateE stateE);
 BType createDeadBoardState(const int width, const int height);
 void iterateRules(BState& state);
-int countLivingCells();
+int countLivingNeighbours(int row, int col);
 void newCell(int row, int col, bool status, BState& state);
 
 // Rules:
