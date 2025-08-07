@@ -1,5 +1,7 @@
-#include <random>
 #include <iostream>
+#include <random>
+
+#include "board/io/printer.h"
 #include "board/logic/controller.h"
 
 namespace Board::Logic {
@@ -14,8 +16,8 @@ void Controller::nextState() {
 
 void Controller::newBoard(int height,
                             int width,
-                            CreationMode mode = CreationMode::AUTOMATIC) {
-    if (mode == CreationMode::AUTOMATIC) {
+                            CreationMode mode = CreationMode::AUTO) {
+    if (mode == CreationMode::AUTO) {
         state.setBoardState(createBoardState(height, width, Board::StateE::RANDOM));
     }
     else {
@@ -26,7 +28,7 @@ void Controller::newBoard(int height,
 }
 
 void Controller::newBoard(BType& boardState) {
-    boardState = std::move(boardState);
+    state = std::move(boardState);
 }
 
 BType Controller::getBoardState() const {
@@ -63,17 +65,20 @@ void Controller::iterateRules(BState& nextBState) {
         for (int w = 0; w < state.getWidth(); w++) {
             int livingNeighbours = countLivingNeighbours(h, w);
             const BType& boardState = state.getBoardState();
-            if (boardState[h][w] == 1) {
+            if (boardState[h][w] == true) {
                 switch (livingNeighbours) {
                     case 0:
                     case 1:
+                        // Rule One
                         newCell(h, w, 0, nextBState);
                         break;
                     case 2:
                     case 3:
+                        // Rule Two
                         newCell(h, w, 1, nextBState);
                         break;
                     default:
+                        // Rule Three
                         if (livingNeighbours > 3) {
                             newCell(h, w, 0, nextBState);
                         }
@@ -82,6 +87,7 @@ void Controller::iterateRules(BState& nextBState) {
                         }
                 }
             }
+            // Rule Four
             else if ((boardState[h][w] == 0) && (livingNeighbours == 3)) {
                 newCell(h, w, 1, nextBState);
             }
@@ -92,13 +98,14 @@ void Controller::iterateRules(BState& nextBState) {
 int Controller::countLivingNeighbours(int row, int col) {
     int livingNeighbours = 0;
 
-    for (int i = (row - 1); i <= (row + 1); row++) {
-        for (int j = (col - 1); j <= (col + 1); col++) {
-            if (i == 1 && j == 1) { continue; }
-            int r = row + i;
-            int c = col + j;
-            if (r >= 0 && row < state.getWidth()
-                && c >= 0 && col < state.getHeight()) {
+    for (int r = (row - 1); r <= (row + 1); r++) {
+        for (int c = (col - 1); c <= (col + 1); c++) {
+            if (r == row && c == col) { 
+                continue;
+            }
+
+            if (r >= 0 && r < state.getWidth()
+                && c >= 0 && c < state.getHeight()) {
                 livingNeighbours += (getBoardState()[r][c]);
             }
         }
@@ -109,6 +116,11 @@ int Controller::countLivingNeighbours(int row, int col) {
 
 void Controller::newCell(int row, int col, bool status, BState& nextBState) {
     nextBState.setCellStatus(row, col, status);
+}
+
+void Controller::print() {
+    Board::IO::Printer printer{state};
+    printer.render(std::cout);
 }
 
 } // Board::Logic

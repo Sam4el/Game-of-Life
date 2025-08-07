@@ -1,15 +1,22 @@
 #include <iostream>
+#include "board/logic/controller.h"
+
 #include "board/state.h"
-#include "board/io/printer.h"
+
+using Controller = Board::Logic::Controller;
 
 int main() {
-    std::cout << "Game Of Life" << std::endl;
+    Controller controller{};
 
-    // Board::BState state;
-    // state.createState(30, 30, Board::BState::StateE::RANDOM);
+    controller.newBoard(20, 20, Controller::CreationMode::AUTO);
+    controller.print();
 
-    // Board::IO::Printer printer{state};
-    // printer.render(std::cout);
+    while (true) {
+        controller.nextState();
+        controller.print();
+    }
+
+    //TODO end game without crashing
     
     return 0;
 }

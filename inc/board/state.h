@@ -4,6 +4,7 @@
 
 namespace Board {
 
+// TODO Think of refactoring BType to std::vector<bool> (flattened 2D array)
 using BType = std::vector<std::vector<bool>>;
 
 enum class StateE {

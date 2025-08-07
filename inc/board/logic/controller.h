@@ -8,7 +8,7 @@ class Controller {
 public:
 
 enum class CreationMode {
-    AUTOMATIC,
+    AUTO,
     MANUAL
 };
 
@@ -17,6 +17,7 @@ Controller() = default;
 void nextState();
 void newBoard(int height, int width, CreationMode mode);
 void newBoard(BType& boardState);
+void print();
 BType getBoardState() const;
 
 private:
