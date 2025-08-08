@@ -5,33 +5,36 @@ Printer::Printer(const Board::BState& state)
                             : state{state} {}
 
 void Printer::render(std::ostream& os) {
-    os << " ";
+    std::string output;
+    output += " ";
 
     for (int row = 0; row < state.getBoardState().size(); row++) {
-        os << "--";
+        output += "--";
     }
 
-    os << std::endl;
+    output += '\n';
 
     for (int row = 0; row < state.getBoardState().size(); row++) {
-        os << "|";
+        output += "|";
         for (int col = 0; col < state.getBoardState()[0].size(); col++) {
             if (state.getBoardState()[row][col] == true) {
-                os << "# ";
+                output += "# ";
             }
             else {
-                os << "  ";
+                output += "  ";
             }
         }
-        os << "|" << std::endl;
+        output += "|";
+        output += '\n';
     }
 
-    os << " ";
+    output += " ";
 
     for (int row = 0; row < state.getBoardState().size(); row++) {
-        os << "--";
+        output += "--";
     }
 
-    os << std::endl;
+    output += '\n';
+    os << output;
 }
 } // Board::IO
